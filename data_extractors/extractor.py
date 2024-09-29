@@ -5,10 +5,17 @@ to the python dictionary format to store data you can use n numberof function yo
 python class it should override the collectdata method should 
 
 """
-class Extractor(object):
-    def __init__(self):
-        self.name="Base Extractor"
-        self.url =""
-        self.description = ""
-    def collectdata(self)->dict:
-        return {}
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+
+class Extractor(ABC):
+
+    @abstractmethod
+    def collect_data(self):
+        pass
+
+class ExtractorDetail():
+    url: str
+    name: str
+    params: str

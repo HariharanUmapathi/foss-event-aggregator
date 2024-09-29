@@ -1,5 +1,9 @@
-import argparse,inspect,json
+import argparse
+import inspect
+import json
+
 from ICSGenerator import ICSGenerator
+from data_extractors.extractor_factory import ExtractorFactory
 from config import *
 """ 
 dynamic import not working so commented create a issue for discussion on it 
@@ -20,23 +24,22 @@ This Event Aggregator aggregates the events in specific format required for gene
 """
 # Cli Argument Handlers -- Starts 
 class CLI(object):
+
     def __init__(self):
-        extractors = globals()
-        self.extractors=[(k,v) for k,v in extractors.items() if k.__contains__("Extractor") and k!="Extractor" and inspect.isclass(v) ]
-        self.functionmap= {
-            'list-sources':self.list_sources,
-            'list-events':self.list_events,
-            'update-events':self.update_events,
-            'generate-ics':self.generate_ics
+        self._extractors = ExtractorFactory.get_available_extractors()
+        self._function_map = {
+            'list-sources': self.list_sources,
+            'list-events': self.list_events,
+            'update-events': self.update_events,
+            'generate-ics': self.generate_ics
         }
-    def get_functionmap(self):
-        return self.functionmap
+
     def list_sources(self):
         sources = set()
-        for name,extractor in self.extractors:
+        for name, extractor in self._extractors.items():
             try:
-                source = getattr(extractor(),"url")
-                if source !='':
+                source = extractor.get_extractor_detail().url
+                if source != '':
                     sources.add(source)
             except AttributeError as err:
                 print(f"{name} {err}")   
@@ -50,9 +53,9 @@ class CLI(object):
     def update_events(self):
         print("Updating the latest events lists")
         masterlist = []
-        for name,extractor in self.extractors:
+        for name, extractor in self.extractors:
             print(f"Extracting Using {name}")
-            masterlist+=extractor().collectdata()
+            masterlist += extractor().collectdata()
             print(len(masterlist))
             with open("event_cache.json","w") as event_cache:
                 event_cache.write(json.dumps(masterlist))
