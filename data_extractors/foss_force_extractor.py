@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 
 from data_extractors.extractor import Extractor, ExtractorDetail
+from util import get_response
 
 EXTRACTOR = ExtractorDetail(
     name="FossForceExtractor",
@@ -24,7 +25,7 @@ class FossForceExtractor(Extractor):
     def collect_data(self)->list:
         eventlist = []
         print("Initializing the data fetch")
-        response = requests.get(self.url+self.params)
+        response = get_response(url = self.url + self.params)
         if response.status_code ==200:
             try:
                 with open('temp.xml',"wb") as temp_xml:

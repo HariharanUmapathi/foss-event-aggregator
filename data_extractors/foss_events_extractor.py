@@ -23,7 +23,7 @@ class FossEventsExtractor(Extractor):
     
     def collect_data(self) -> list:
         # function to scrape event details from the https://foss.events/
-        response = requests.get(self.url)
+        response = get_response(url = self.url)
         if response.status_code == 200:
             print("lxml html tree building")
             doc_root = lxml.html.fromstring(response.content)
