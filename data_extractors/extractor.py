@@ -15,6 +15,7 @@ class Extractor(ABC):
     def collect_data(self):
         pass
 
+@dataclass
 class ExtractorDetail():
     url: str
     name: str

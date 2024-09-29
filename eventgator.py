@@ -4,7 +4,7 @@ import json
 
 from ICSGenerator import ICSGenerator
 from data_extractors.extractor_factory import ExtractorFactory
-from config import *
+# from config import *
 """ 
 dynamic import not working so commented create a issue for discussion on it 
 import os,importlib
@@ -27,7 +27,7 @@ class CLI(object):
 
     def __init__(self):
         self._extractors = ExtractorFactory.get_available_extractors()
-        self._function_map = {
+        self.function_map = {
             'list-sources': self.list_sources,
             'list-events': self.list_events,
             'update-events': self.update_events,
@@ -53,9 +53,9 @@ class CLI(object):
     def update_events(self):
         print("Updating the latest events lists")
         masterlist = []
-        for name, extractor in self.extractors:
+        for name, extractor in self._extractors.items():
             print(f"Extracting Using {name}")
-            masterlist += extractor().collectdata()
+            masterlist += extractor().collect_data()
             print(len(masterlist))
             with open("event_cache.json","w") as event_cache:
                 event_cache.write(json.dumps(masterlist))
@@ -80,13 +80,13 @@ class CLI(object):
 def eventgator():
     cli = CLI()
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument("-c","--command",dest="command",choices=cli.functionmap.keys())
+    parser.add_argument("-c","--command",dest="command",choices=cli.function_map.keys())
     args = parser.parse_args()
     try: 
         if args.command == None:
             print("No Command Given")
             return parser.print_help()
-        cli.functionmap[args.command]()
+        cli.function_map[args.command]()
     except KeyError as err:
         print("Invalid Command",err)
         parser.print_help()
