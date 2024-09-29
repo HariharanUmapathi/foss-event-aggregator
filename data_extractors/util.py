@@ -1,4 +1,5 @@
 import logging
+import requests
 from tenacity import before_log, after_log
 from tenacity import retry, stop_after_attempt, wait_fixed
 
@@ -9,4 +10,4 @@ logger = logging.getLogger(__name__)
 def get_response(url):
     response = requests.get(url)
     response.raise_for_status()
-    return response.json()
+    return response

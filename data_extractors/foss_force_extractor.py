@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 
 from data_extractors.extractor import Extractor, ExtractorDetail
-from util import get_response
+from data_extractors.util import get_response
 
 EXTRACTOR = ExtractorDetail(
     name="FossForceExtractor",

@@ -3,6 +3,7 @@ import lxml.html
 import json
 
 from data_extractors.extractor import Extractor, ExtractorDetail
+from data_extractors.util import get_response
 
 EXTRACTOR = ExtractorDetail(
     name="Constructor",
