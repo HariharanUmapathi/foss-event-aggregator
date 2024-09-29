@@ -1,6 +1,10 @@
-import argparse,inspect,json
+import argparse
+import inspect
+import json
+
 from ICSGenerator import ICSGenerator
-from config import *
+from data_extractors.extractor_factory import ExtractorFactory
+
 """ 
 dynamic import not working so commented create a issue for discussion on it 
 import os,importlib
@@ -18,46 +22,45 @@ VERSION = "V 0.0.1"
 DESCRIPTION = f"""Event Aggregator {VERSION} 
 This Event Aggregator aggregates the events in specific format required for generating the ics file.
 """
-# Cli Argument Handlers -- Starts 
+ 
 class CLI(object):
+
     def __init__(self):
-        extractors = globals()
-        self.extractors=[(k,v) for k,v in extractors.items() if k.__contains__("Extractor") and k!="Extractor" and inspect.isclass(v) ]
-        self.functionmap= {
-            'list-sources':self.list_sources,
-            'list-events':self.list_events,
-            'update-events':self.update_events,
-            'generate-ics':self.generate_ics
+        self._extractors = ExtractorFactory.get_available_extractors()
+        self.function_map = {
+            'list-sources': self.list_sources,
+            'list-events': self.list_events,
+            'update-events': self.update_events,
+            'generate-ics': self.generate_ics
         }
-    def get_functionmap(self):
-        return self.functionmap
+
     def list_sources(self):
         sources = set()
-        for name,extractor in self.extractors:
+        for name, extractor in self._extractors.items():
             try:
-                source = getattr(extractor(),"url")
-                if source !='':
+                source = extractor.get_extractor_detail().url
+                if source != '':
                     sources.add(source)
             except AttributeError as err:
                 print(f"{name} {err}")   
         print("Current Event Sources ",sources)         
         return sources
-    #Method should implement
+
     def list_events(self):
         print("Listing events from the events sources")
         print("Displaying from last update")
-        return 
+
     def update_events(self):
         print("Updating the latest events lists")
         masterlist = []
-        for name,extractor in self.extractors:
+        for name, extractor in self._extractors.items():
             print(f"Extracting Using {name}")
-            masterlist+=extractor().collectdata()
+            masterlist += extractor().collect_data()
             print(len(masterlist))
             with open("event_cache.json","w") as event_cache:
                 event_cache.write(json.dumps(masterlist))
                 event_cache.close()
-        return 
+
     def generate_ics(self):
         print("Generating... ICS File")
         with open("event_cache.json","r") as event_cache:
@@ -69,25 +72,20 @@ class CLI(object):
             icsgenerator.events_info=events
             icsgenerator.write_ics_file()
             print("ICS File writing done")
-        return 
-# Cli Argument Handlers -- Ends 
-## Function map 
-    
-# Main function 
+ 
 def eventgator():
     cli = CLI()
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument("-c","--command",dest="command",choices=cli.functionmap.keys())
+    parser.add_argument("-c","--command",dest="command",choices=cli.function_map.keys())
     args = parser.parse_args()
     try: 
         if args.command == None:
             print("No Command Given")
             return parser.print_help()
-        cli.functionmap[args.command]()
+        cli.function_map[args.command]()
     except KeyError as err:
         print("Invalid Command",err)
         parser.print_help()
-    # Main Function Ends 
 
 if __name__=="__main__":
     eventgator()

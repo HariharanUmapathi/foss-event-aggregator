@@ -1,13 +1,30 @@
-from dataextractors.Extractor import Extractor
-import requests,lxml.html,json
+import requests
+import lxml.html
+import json
+
+from data_extractors.extractor import Extractor, ExtractorDetail
+from data_extractors.util import get_response
+
+EXTRACTOR = ExtractorDetail(
+    name="Constructor",
+    url="https://foss.events/",
+    params="")
+
+
 class FossEventsExtractor(Extractor):
+
     def __init__(self):
-        super().__init__()
-        self.name="Constructor"
-        self.url = "https://foss.events/"
-    def collectdata(self)->list:
+        self.name = EXTRACTOR.name
+        self.url = EXTRACTOR.url
+        self.params = EXTRACTOR.params
+    
+    @staticmethod
+    def get_extractor_detail():
+        return EXTRACTOR
+    
+    def collect_data(self) -> list:
         # function to scrape event details from the https://foss.events/
-        response = requests.get(self.url)
+        response = get_response(url = self.url)
         if response.status_code == 200:
             print("lxml html tree building")
             doc_root = lxml.html.fromstring(response.content)
