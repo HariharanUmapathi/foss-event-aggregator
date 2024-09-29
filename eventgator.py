@@ -4,7 +4,7 @@ import json
 
 from ICSGenerator import ICSGenerator
 from data_extractors.extractor_factory import ExtractorFactory
-# from config import *
+
 """ 
 dynamic import not working so commented create a issue for discussion on it 
 import os,importlib
@@ -22,7 +22,7 @@ VERSION = "V 0.0.1"
 DESCRIPTION = f"""Event Aggregator {VERSION} 
 This Event Aggregator aggregates the events in specific format required for generating the ics file.
 """
-# Cli Argument Handlers -- Starts 
+ 
 class CLI(object):
 
     def __init__(self):
@@ -45,11 +45,11 @@ class CLI(object):
                 print(f"{name} {err}")   
         print("Current Event Sources ",sources)         
         return sources
-    #Method should implement
+
     def list_events(self):
         print("Listing events from the events sources")
         print("Displaying from last update")
-        return 
+
     def update_events(self):
         print("Updating the latest events lists")
         masterlist = []
@@ -60,7 +60,7 @@ class CLI(object):
             with open("event_cache.json","w") as event_cache:
                 event_cache.write(json.dumps(masterlist))
                 event_cache.close()
-        return 
+
     def generate_ics(self):
         print("Generating... ICS File")
         with open("event_cache.json","r") as event_cache:
@@ -72,11 +72,7 @@ class CLI(object):
             icsgenerator.events_info=events
             icsgenerator.write_ics_file()
             print("ICS File writing done")
-        return 
-# Cli Argument Handlers -- Ends 
-## Function map 
-    
-# Main function 
+ 
 def eventgator():
     cli = CLI()
     parser = argparse.ArgumentParser(description=DESCRIPTION)
@@ -90,7 +86,6 @@ def eventgator():
     except KeyError as err:
         print("Invalid Command",err)
         parser.print_help()
-    # Main Function Ends 
 
 if __name__=="__main__":
     eventgator()
