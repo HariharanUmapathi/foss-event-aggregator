@@ -2,10 +2,12 @@
 from data_extractors.foss_events_extractor import FossEventsExtractor
 from data_extractors.foss_force_extractor import FossForceExtractor
 from data_extractors.icfoss_extractor import ICFOSSExtractor
+from data_extractors.kanchilug_extractor import KanchilugEventsExtractor
 AVAILABLE_EXTRACTORS = {
     "FOSS_EVENTS": FossEventsExtractor,
     "FOSS_FORCE": FossForceExtractor,
-    "ICS_FOSS":ICFOSSExtractor
+    "ICS_FOSS":ICFOSSExtractor,
+    "KANCHILUG_EVENTS" : KanchilugEventsExtractor
 }
 
 class ExtractorFactory:
